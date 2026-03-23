@@ -86,7 +86,22 @@ what a file contains -- read it.
 2. REVIEW your changes for consistency with existing code patterns.
 3. CONFIRM every file you modified was read first.
 
-### Step 5: UPDATE README
+### Step 5: CLEAN UP
+
+Remove any files from the template that are not needed by the generated
+workflow. This includes:
+
+- Template boilerplate files that were not modified or are no longer relevant.
+- The `.github/` directory and its contents — generated workflows do not
+  need CI/CD pipelines from the template.
+- Any `.gitkeep` files in directories that now contain real files.
+- Unused dependencies from `package.json` that the workflow does not use.
+
+### Step 6: VERIFY AGAIN
+
+1. ENSURE all code still compiles and passes linting after cleanup.
+
+### Step 7: UPDATE README
 
 After all code changes are verified, you MUST update the README.md file to
 accurately describe the generated application. The README should include:

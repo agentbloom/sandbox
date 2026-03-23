@@ -83,6 +83,17 @@ what a file contains -- read it.
 2. REVIEW your changes for consistency with existing code patterns.
 3. CONFIRM every file you modified was read first.
 
+### Step 5: UPDATE README
+
+After all code changes are verified, you MUST update the README.md file to
+accurately describe the generated application. The README should include:
+
+- Project name and one-line description.
+- How to install and run the application.
+- Required environment variables (with descriptions, never values).
+- How the workflow operates (agents, tools, data flow).
+- Any scheduled jobs or triggers.
+
 ## Architecture & Code Quality
 
 - Perfect architecture. Refactor to maintain clean code. Spaghetti code is a failure.

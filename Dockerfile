@@ -1,16 +1,17 @@
 FROM node:22-slim
 
 RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
-RUN npm install -g @anthropic-ai/claude-code
+RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN pnpm install -g @anthropic-ai/claude-code
 
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm install
+COPY package.json pnpm-lock.yaml* ./
+RUN pnpm install
 
 COPY tsconfig.json ./
 COPY src/ src/
 COPY docs/ docs/
-RUN npm run build
+RUN pnpm run build
 
 ENTRYPOINT ["node", "dist/index.js"]

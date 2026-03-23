@@ -6,7 +6,7 @@ interface LintResult {
 }
 
 async function runLint(workingDir: string): Promise<LintResult> {
-  const output = execSync('npm run lint 2>&1', { cwd: workingDir, encoding: 'utf-8' });
+  const output = execSync('pnpm run lint 2>&1', { cwd: workingDir, encoding: 'utf-8' });
 
   return { success: true, output };
 }

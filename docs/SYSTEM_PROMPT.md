@@ -24,6 +24,7 @@ src/
   lib/
     scraper.ts          # Cheerio HTML extraction
     email.ts            # Resend email delivery
+    cron.ts             # In-memory cron job scheduler
   mastra/
     index.ts            # Mastra instance + provider re-export
     model.ts            # Anthropic provider singleton
@@ -39,6 +40,8 @@ src/
 - Register all agents in src/mastra/index.ts.
 - Use scrapePage() from src/lib/scraper.ts for web scraping.
 - Use sendEmail() from src/lib/email.ts for email delivery.
+- Use registerCronJob(name, schedule, handler) from src/lib/cron.ts for
+  scheduled tasks. Uses cron syntax (e.g., "0 18 * * *" for daily at 18:00 UTC).
 - Database schema lives in src/db/schema.ts using Drizzle ORM with
   PostgreSQL + pgvector.
 - All code must be TypeScript with proper type annotations.

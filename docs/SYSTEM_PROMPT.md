@@ -82,9 +82,13 @@ what a file contains -- read it.
 
 ### Step 4: VERIFY
 
-1. ENSURE all code compiles and passes linting.
-2. REVIEW your changes for consistency with existing code patterns.
-3. CONFIRM every file you modified was read first.
+1. Run `npm run lint` to check for lint errors.
+2. Run `npx tsc --noEmit` to check for type errors.
+3. REVIEW your changes for consistency with existing code patterns.
+4. CONFIRM every file you modified was read first.
+
+**IMPORTANT: Do NOT run `npm run build` or `next build`. The build happens later
+during Docker image creation. Only run lint and typecheck.**
 
 ### Step 5: CLEAN UP
 
@@ -96,10 +100,6 @@ workflow. This includes:
   need CI/CD pipelines from the template.
 - Any `.gitkeep` files in directories that now contain real files.
 - Unused dependencies from `package.json` that the workflow does not use.
-
-### Step 6: VERIFY AGAIN
-
-1. ENSURE all code still compiles and passes linting after cleanup.
 
 ### Step 7: UPDATE README
 

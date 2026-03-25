@@ -1,10 +1,18 @@
 import { execSync } from 'child_process';
 
 async function buildAndPushImage(workingDir: string, appName: string): Promise<string> {
-  const output = execSync(
-    `flyctl deploy . --build-only --remote-only --app ${appName} 2>&1`,
-    { cwd: workingDir, encoding: 'utf-8' },
-  );
+  let output: string;
+
+  try {
+    output = execSync(
+      `flyctl deploy . --build-only --remote-only --app ${appName} 2>&1`,
+      { cwd: workingDir, encoding: 'utf-8' },
+    );
+  } catch (err) {
+    const stderr = err instanceof Error && 'stdout' in err ? (err as { stdout: string }).stdout : '';
+    console.error('[BUILD FAILED]', stderr);
+    throw new Error(`flyctl deploy failed: ${stderr.slice(-500)}`);
+  }
 
   console.log('[BUILD OUTPUT]', output);
 

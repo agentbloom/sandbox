@@ -1,8 +1,10 @@
 FROM node:22-slim
 
-RUN apt-get update && apt-get install -y git curl buildah fuse-overlayfs && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN npm install -g @anthropic-ai/claude-code
+RUN curl -L https://fly.io/install.sh | sh
+ENV PATH="/root/.fly/bin:${PATH}"
 
 WORKDIR /app
 

@@ -7,7 +7,7 @@ async function buildAndPushImage(workingDir: string, appName: string): Promise<s
   // Login to Fly registry
   try {
     execSync(
-      `buildah login --storage-driver=vfs -u x -p ${flyApiToken} registry.fly.io 2>&1`,
+      `echo "${flyApiToken}" | buildah login --storage-driver=vfs -u x --password-stdin registry.fly.io 2>&1`,
       { encoding: 'utf-8' },
     );
   } catch (err) {

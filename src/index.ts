@@ -17,9 +17,9 @@ async function main(): Promise<void> {
   const apiUrl = process.env.API_URL;
   const sandboxWebhookSecret = process.env.SANDBOX_WEBHOOK_SECRET;
   const workflowId = process.env.WORKFLOW_ID;
-  const flyAppName = process.env.FLY_APP_NAME;
+  const productionAppId = process.env.PRODUCTION_APP_ID;
 
-  if (!githubToken || !claudeCodeOauthToken || !apiUrl || !sandboxWebhookSecret || !workflowId || !flyAppName) {
+  if (!githubToken || !claudeCodeOauthToken || !apiUrl || !sandboxWebhookSecret || !workflowId || !productionAppId) {
     console.error('Missing required environment variables');
     process.exit(1);
   }
@@ -130,7 +130,7 @@ async function main(): Promise<void> {
   let imageRef: string;
 
   try {
-    imageRef = await buildAndPushImage(WORKSPACE, flyAppName);
+    imageRef = await buildAndPushImage(WORKSPACE, productionAppId);
   } catch (err) {
     await createError(workflow.id, 'Failed to build and push image', err, 'GENERATION_FAILED');
     return;

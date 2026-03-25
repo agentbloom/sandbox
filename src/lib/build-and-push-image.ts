@@ -2,17 +2,20 @@ import { execSync } from 'child_process';
 
 async function buildAndPushImage(workingDir: string, appName: string): Promise<string> {
   const output = execSync(
-    `flyctl deploy . --build-only --remote-only --app ${appName}`,
-    { cwd: workingDir, encoding: 'utf-8', stdio: 'pipe' },
+    `flyctl deploy . --build-only --remote-only --app ${appName} 2>&1`,
+    { cwd: workingDir, encoding: 'utf-8' },
   );
 
+  console.log('[BUILD OUTPUT]', output);
+
+  // flyctl outputs the image ref as "image: registry.fly.io/app:deployment-XXXX"
   const imageMatch = output.match(/image:\s*(registry\.fly\.io\/\S+)/i);
 
-  if (imageMatch) {
-    return imageMatch[1];
+  if (!imageMatch) {
+    throw new Error(`Could not parse image ref from flyctl output: ${output.slice(-500)}`);
   }
 
-  return `registry.fly.io/${appName}:latest`;
+  return imageMatch[1];
 }
 
 export default buildAndPushImage;

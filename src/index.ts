@@ -7,6 +7,7 @@ import runGenerationAgent from './lib/run-generation-agent.js';
 import runLint from './lib/run-lint.js';
 import runTypecheck from './lib/run-typecheck.js';
 import pushToGithub from './lib/push-to-github.js';
+import buildAndPushImage from './lib/build-and-push-image.js';
 
 const WORKSPACE = process.env.WORKSPACE || '/workspace';
 
@@ -16,8 +17,9 @@ async function main(): Promise<void> {
   const apiUrl = process.env.API_URL;
   const sandboxWebhookSecret = process.env.SANDBOX_WEBHOOK_SECRET;
   const workflowId = process.env.WORKFLOW_ID;
+  const productionAppId = process.env.PRODUCTION_APP_ID;
 
-  if (!githubToken || !claudeCodeOauthToken || !apiUrl || !sandboxWebhookSecret || !workflowId) {
+  if (!githubToken || !claudeCodeOauthToken || !apiUrl || !sandboxWebhookSecret || !workflowId || !productionAppId) {
     console.error('Missing required environment variables');
     process.exit(1);
   }
@@ -120,7 +122,22 @@ async function main(): Promise<void> {
   }
 
   try {
-    await sendWebhookNotification(workflow.id, 'info', 'Generation complete', 'GENERATION_COMPLETE');
+    await sendWebhookNotification(workflow.id, 'info', 'Building Docker image...');
+  } catch {
+    // non-fatal
+  }
+
+  let imageRef: string;
+
+  try {
+    imageRef = await buildAndPushImage(WORKSPACE, productionAppId);
+  } catch (err) {
+    await createError(workflow.id, 'Failed to build and push image', err, 'GENERATION_FAILED');
+    return;
+  }
+
+  try {
+    await sendWebhookNotification(workflow.id, 'info', 'Generation complete', { code: 'GENERATION_COMPLETE', imageRef });
   } catch {
     // non-fatal
   }

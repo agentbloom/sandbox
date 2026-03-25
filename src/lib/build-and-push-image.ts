@@ -5,7 +5,7 @@ async function buildAndPushImage(workingDir: string, appName: string): Promise<s
 
   try {
     output = execSync(
-      `flyctl deploy . --build-only --remote-only --app ${appName} 2>&1`,
+      `flyctl deploy . --build-only --push --remote-only --app ${appName} 2>&1`,
       { cwd: workingDir, encoding: 'utf-8' },
     );
   } catch (err) {

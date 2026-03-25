@@ -1,5 +1,6 @@
 import sendWebhookNotification from './lib/send-webhook-notification.js';
 import createError from './lib/create-error.js';
+import fetchWorkflow from './lib/fetch-workflow.js';
 import cloneRepo from './lib/clone-repo.js';
 import installDependencies from './lib/install-dependencies.js';
 import runGenerationAgent from './lib/run-generation-agent.js';
@@ -15,26 +16,20 @@ async function main(): Promise<void> {
   const claudeCodeOauthToken = process.env.CLAUDE_CODE_OAUTH_TOKEN;
   const apiUrl = process.env.API_URL;
   const sandboxWebhookSecret = process.env.SANDBOX_WEBHOOK_SECRET;
-  const workflowData = process.env.WORKFLOW_DATA;
+  const workflowId = process.env.WORKFLOW_ID;
   const flyAppName = process.env.FLY_APP_NAME;
 
-  if (!githubToken || !claudeCodeOauthToken || !apiUrl || !sandboxWebhookSecret || !workflowData || !flyAppName) {
+  if (!githubToken || !claudeCodeOauthToken || !apiUrl || !sandboxWebhookSecret || !workflowId || !flyAppName) {
     console.error('Missing required environment variables');
     process.exit(1);
   }
 
-  let workflow: {
-    id: string;
-    specMarkdown: string | null;
-    specStructured: Record<string, unknown> | null;
-    githubRepoUrl: string | null;
-    messages: Array<{ role: string; content: string; phase: string }>;
-  };
+  let workflow;
 
   try {
-    workflow = JSON.parse(workflowData);
+    workflow = await fetchWorkflow(apiUrl, workflowId);
   } catch (err) {
-    console.error('Failed to parse WORKFLOW_DATA:', err);
+    console.error('Failed to fetch workflow:', err);
     process.exit(1);
   }
 

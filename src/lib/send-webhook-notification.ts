@@ -3,16 +3,15 @@ type StateCode = 'GENERATION_COMPLETE' | 'GENERATION_FAILED';
 
 interface WebhookOptions {
   code?: StateCode;
-  imageRef?: string;
+  githubRepoUrl?: string;
 }
 
 async function sendWebhookNotification(workflowId: string, level: LogLevel, message: string, options?: StateCode | WebhookOptions): Promise<void> {
   const apiUrl = process.env.API_URL!;
   const sandboxWebhookSecret = process.env.SANDBOX_WEBHOOK_SECRET!;
 
-  // Support both old signature (code as string) and new signature (options object)
   const code = typeof options === 'string' ? options : options?.code;
-  const imageRef = typeof options === 'object' ? options?.imageRef : undefined;
+  const githubRepoUrl = typeof options === 'object' ? options?.githubRepoUrl : undefined;
 
   console.log(`[${level.toUpperCase()}] ${message}`);
 
@@ -25,11 +24,10 @@ async function sendWebhookNotification(workflowId: string, level: LogLevel, mess
         level,
         message,
         ...(code ? { code } : {}),
-        ...(imageRef ? { imageRef } : {}),
+        ...(githubRepoUrl ? { githubRepoUrl } : {}),
       }),
     });
 
-    // Consume the response body to prevent connection leaks
     await response.text();
   } catch {
     // non-fatal — sandbox continues even if log delivery fails

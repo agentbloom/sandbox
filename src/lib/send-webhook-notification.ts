@@ -8,7 +8,7 @@ interface WebhookOptions {
 
 async function sendWebhookNotification(workflowId: string, level: LogLevel, message: string, options?: StateCode | WebhookOptions): Promise<void> {
   const apiUrl = process.env.API_URL!;
-  const sandboxWebhookSecret = process.env.SANDBOX_WEBHOOK_SECRET!;
+  const apiSecret = process.env.API_SECRET!;
 
   const code = typeof options === 'string' ? options : options?.code;
   const githubRepoUrl = typeof options === 'object' ? options?.githubRepoUrl : undefined;
@@ -16,9 +16,12 @@ async function sendWebhookNotification(workflowId: string, level: LogLevel, mess
   console.log(`[${level.toUpperCase()}] ${message}`);
 
   try {
-    const response = await fetch(`${apiUrl}/api/v1/webhooks/sandbox/${sandboxWebhookSecret}`, {
+    const response = await fetch(`${apiUrl}/api/v1/webhooks/sandbox`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiSecret}`,
+      },
       body: JSON.stringify({
         workflowId,
         level,

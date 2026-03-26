@@ -14,11 +14,10 @@ async function main(): Promise<void> {
   const githubToken = process.env.GITHUB_TOKEN;
   const claudeCodeOauthToken = process.env.CLAUDE_CODE_OAUTH_TOKEN;
   const apiUrl = process.env.API_URL;
-  const sandboxWebhookSecret = process.env.SANDBOX_WEBHOOK_SECRET;
+  const apiSecret = process.env.API_SECRET;
   const workflowId = process.env.WORKFLOW_ID;
-  const productionServiceId = process.env.PRODUCTION_SERVICE_ID;
 
-  if (!githubToken || !claudeCodeOauthToken || !apiUrl || !sandboxWebhookSecret || !workflowId || !productionServiceId) {
+  if (!githubToken || !claudeCodeOauthToken || !apiUrl || !apiSecret || !workflowId) {
     console.error('Missing required environment variables');
     process.exit(1);
   }

@@ -8,7 +8,6 @@ async function runGenerationAgent(
   workflowId: string,
   workingDir: string,
   specMarkdown: string,
-  specStructured: string,
   chatTranscript: string,
 ): Promise<void> {
 
@@ -17,10 +16,6 @@ async function runGenerationAgent(
 ## Specification
 
 ${specMarkdown}
-
-## Structured Specification
-
-${specStructured}
 
 ## Conversation Context
 

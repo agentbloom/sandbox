@@ -76,7 +76,6 @@ async function main(): Promise<void> {
       workflow.id,
       WORKSPACE,
       workflow.specMarkdown || '',
-      JSON.stringify(workflow.specStructured || {}),
       JSON.stringify(describeMessages),
     );
   } catch (err) {

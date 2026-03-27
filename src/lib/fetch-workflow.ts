@@ -2,7 +2,6 @@ interface Workflow {
   id: string;
   specMarkdown: string | null;
   githubRepoUrl: string | null;
-  productionServiceUrl: string | null;
   messages: Array<{ role: string; content: string; phase: string }>;
 }
 

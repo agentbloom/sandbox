@@ -24,11 +24,11 @@ src/
   lib/
     cron.ts             # In-memory cron job scheduler
   mastra/
-    index.ts            # Mastra instance + provider re-export
-    model.ts            # Anthropic provider singleton
+    index.ts            # Mastra instance + OpenAI provider re-export
+    model.ts            # OpenAI provider singleton
     agents/             # Agent definitions (one file per agent)
     tools/
-      scrape-page.ts    # Mastra tool: scrape a web page (Cheerio + ScreenshotOne)
+      scrape-page.ts    # Mastra tool: scrape a web page (Cheerio)
       send-email.ts     # Mastra tool: send email via Resend
     workflows/          # Workflow definitions (one file per workflow)
 
@@ -49,10 +49,55 @@ src/
 ### Stack
 
 - Framework: Next.js 16 (App Router, TypeScript, Material UI)
-- Orchestration: Mastra (@mastra/core) with Anthropic Claude Opus via @ai-sdk/anthropic
+- Orchestration: Mastra (@mastra/core) with OpenAI via @ai-sdk/openai
+- Memory: @mastra/memory for agent conversation memory
+- RAG: @mastra/rag for retrieval-augmented generation
+- Storage: @mastra/pg for Mastra's PostgreSQL storage backend
 - Database: PostgreSQL + pgvector via Drizzle ORM
+- Document ingestion: LlamaParse (llamaindex) for parsing PDFs and documents
 - Scraping: Cheerio (HTML extraction)
 - Email: Resend
+
+### Available Mastra Modules
+
+The following Mastra modules are available in the stack and can be used
+when the specification requires them:
+
+- `@mastra/core` — Core framework: agents, tools, workflows
+- `@mastra/memory` — Conversation memory for agents (PostgreSQL-backed)
+- `@mastra/pg` — PostgreSQL storage backend for Mastra
+- `@mastra/rag` — Retrieval-augmented generation (embeddings, vector search)
+
+Use these modules when the workflow requires memory, RAG, or persistent
+storage beyond basic database operations.
+
+### Tool Execute Signature
+
+The `createTool` execute function receives the input directly as the first
+parameter — NOT wrapped in `{ context }`:
+
+```typescript
+import { createTool } from "@mastra/core/tools";
+import { z } from "zod";
+
+export const myTool = createTool({
+  id: "myTool",
+  description: "Description of what this tool does",
+  inputSchema: z.object({
+    name: z.string(),
+  }),
+  outputSchema: z.object({
+    result: z.string(),
+  }),
+  execute: async ({ name }) => {
+    return { result: `Hello ${name}` };
+  },
+});
+```
+
+**IMPORTANT:** Do NOT use `({ context }) =>` — this is the old API and will
+cause type errors. The input fields are destructured directly from the first
+parameter.
 
 ## Required Workflow (Follow This Order)
 
@@ -131,7 +176,7 @@ accurately describe the generated application. The README should include:
 ## You Are Not Limited to the Template
 
 Write any bespoke code the workflow requires: new utilities, API routes, components,
-database tables, BullMQ jobs, third-party packages.
+database tables, third-party packages.
 
 ## Hard Rules (NEVER violate these)
 

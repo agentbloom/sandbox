@@ -31,7 +31,6 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const stackRepoUrl = `https://github.com/${process.env.GITHUB_ORG || 'agentbloom'}/${process.env.STACK_REPO || 'stack'}.git`;
   const githubRepoUrl = workflow.githubRepoUrl;
 
   if (!githubRepoUrl) {
@@ -39,14 +38,19 @@ async function main(): Promise<void> {
     return;
   }
 
+  const isIteration = !!workflow.productionServiceUrl;
+  const cloneUrl = isIteration
+    ? githubRepoUrl
+    : `https://github.com/${process.env.GITHUB_ORG || 'agentbloom'}/${process.env.STACK_REPO || 'stack'}.git`;
+
   try {
-    await sendWebhookNotification(workflow.id, 'info', 'Cloning stack template...');
+    await sendWebhookNotification(workflow.id, 'info', isIteration ? 'Cloning existing workflow...' : 'Cloning stack template...');
   } catch {
     // non-fatal
   }
 
   try {
-    await cloneRepo(stackRepoUrl, githubToken, WORKSPACE);
+    await cloneRepo(cloneUrl, githubToken, WORKSPACE);
   } catch (err) {
     await createError(workflow.id, 'Failed to clone repo', err, 'GENERATION_FAILED');
   }

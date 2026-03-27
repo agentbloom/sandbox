@@ -10,10 +10,12 @@ async function pushToGithub(workingDir: string, repoUrl: string, token: string):
 
   const status = execSync('git status --porcelain', { cwd: workingDir, encoding: 'utf-8' });
 
-  if (status.trim()) {
-    execSync('git commit -m "Generated workflow from spec"', { cwd: workingDir });
+  if (!status.trim()) {
+    console.log('[push-to-github] No changes to commit, skipping push');
+    return;
   }
 
+  execSync('git commit -m "Generated workflow from spec"', { cwd: workingDir });
   execSync('git push --force -u origin main', { cwd: workingDir, stdio: 'pipe' });
 }
 

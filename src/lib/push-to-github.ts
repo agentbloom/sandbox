@@ -7,7 +7,13 @@ async function pushToGithub(workingDir: string, repoUrl: string, token: string):
   execSync('git config user.name "Agent Bloom"', { cwd: workingDir });
   execSync(`git remote set-url origin ${authedUrl}`, { cwd: workingDir });
   execSync('git add -A', { cwd: workingDir });
-  execSync('git commit -m "Generated workflow from spec"', { cwd: workingDir });
+
+  const status = execSync('git status --porcelain', { cwd: workingDir, encoding: 'utf-8' });
+
+  if (status.trim()) {
+    execSync('git commit -m "Generated workflow from spec"', { cwd: workingDir });
+  }
+
   execSync('git push --force -u origin main', { cwd: workingDir, stdio: 'pipe' });
 }
 

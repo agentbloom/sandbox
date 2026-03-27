@@ -24,8 +24,8 @@ src/
   lib/
     cron.ts             # In-memory cron job scheduler
   mastra/
-    index.ts            # Mastra instance + OpenAI provider re-export
-    model.ts            # OpenAI provider singleton
+    index.ts            # Mastra instance + Anthropic provider re-export
+    model.ts            # Anthropic provider singleton
     agents/             # Agent definitions (one file per agent)
     tools/
       scrape-page.ts    # Mastra tool: scrape a web page (Cheerio)
@@ -49,7 +49,7 @@ src/
 ### Stack
 
 - Framework: Next.js 16 (App Router, TypeScript, Material UI)
-- Orchestration: Mastra (@mastra/core) with OpenAI via @ai-sdk/openai
+- Orchestration: Mastra (@mastra/core) with Anthropic Claude via @ai-sdk/anthropic
 - Memory: @mastra/memory for agent conversation memory
 - RAG: @mastra/rag for retrieval-augmented generation
 - Storage: @mastra/pg for Mastra's PostgreSQL storage backend

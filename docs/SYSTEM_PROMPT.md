@@ -209,6 +209,10 @@ workflow. This includes:
 - Any `.gitkeep` files in directories that now contain real files.
 - Unused dependencies from `package.json` that the workflow does not use.
 
+**IMPORTANT: Do NOT remove the `db:generate`, `db:migrate`, `db:push`, or
+`db:studio` scripts from `package.json`. These are required for database
+migrations during deployment, even if the workflow does not explicitly use them.**
+
 **IMPORTANT: After removing dependencies from `package.json`, run
 `pnpm install` to regenerate the lockfile.**
 

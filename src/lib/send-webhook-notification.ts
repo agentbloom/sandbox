@@ -16,7 +16,7 @@ async function sendWebhookNotification(workflowId: string, level: LogLevel, mess
   console.log(`[${level.toUpperCase()}] ${message}`);
 
   try {
-    const response = await fetch(`${apiUrl}/api/v1/webhooks/sandbox`, {
+    const response = await fetch(`${apiUrl}/v1/webhooks/sandbox`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

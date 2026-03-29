@@ -6,7 +6,7 @@ interface Workflow {
 }
 
 async function fetchWorkflow(apiUrl: string, workflowId: string): Promise<Workflow> {
-  const response = await fetch(`${apiUrl}/api/v1/workflows/${workflowId}`, {
+  const response = await fetch(`${apiUrl}/v1/workflows/${workflowId}`, {
     headers: {
       'Authorization': `Bearer ${process.env.API_SECRET}`,
     },

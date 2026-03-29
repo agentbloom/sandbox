@@ -56,7 +56,8 @@ src/
 ### Conventions
 
 - Agents go in `src/mastra/agents/`, one file per agent.
-- Tools go in `src/mastra/tools/`, one file per tool.
+- Tools go in `src/mastra/tools/`, one file per tool. Tools must NOT contain
+  business logic — they define schemas and delegate to helpers in `src/lib/`.
 - Workflows go in `src/mastra/workflows/`, one file per workflow.
 - Register all agents in `src/mastra/index.ts`.
 - Singletons and registries go in `src/model/`.

@@ -29,6 +29,7 @@ src/
     stop-cron-job.ts      # Stop a single cron job
     stop-all-cron-jobs.ts # Stop all cron jobs
   model/                  # Singletons, constants, registries
+    logger.ts             # JSON logger singleton (info, warn, error, debug)
     cronjob.ts            # Cron job registry (Map singleton)
   mastra/
     index.ts              # Mastra instance + Anthropic provider re-export
@@ -66,6 +67,10 @@ src/
   Register cron jobs in `src/instrumentation.ts`.
 - Database schema lives in `src/db/schema.ts` using Drizzle ORM with PostgreSQL.
 - All code must be TypeScript with explicit type annotations.
+- Use the JSON logger from `@/model/logger` for all logging. Never use
+  `console.log` directly. Import: `import logger from '@/model/logger'`.
+  Methods: `logger.info()`, `logger.warn()`, `logger.error()`, `logger.debug()`.
+  All methods accept `(message: string, meta?: Record<string, unknown>)`.
 - Use MUI `sx` prop for all styling. No Tailwind, CSS modules, or styled-components.
 
 ### Stack

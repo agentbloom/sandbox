@@ -6,6 +6,7 @@ import installDependencies from './lib/install-dependencies.js';
 import runGenerationAgent from './lib/run-generation-agent.js';
 import runLint from './lib/run-lint.js';
 import runTypecheck from './lib/run-typecheck.js';
+import runSpecSecurityReview from './lib/run-spec-security-review.js';
 import runSecurityReview from './lib/run-security-review.js';
 import pushToGithub from './lib/push-to-github.js';
 
@@ -39,6 +40,20 @@ async function main(): Promise<void> {
     return;
   }
 
+  const messages = workflow.messages.filter(m => m.phase === 'describe' || m.phase === 'iterate');
+
+  try {
+    await sendWebhookNotification(workflow.id, 'info', 'Running spec security review...');
+  } catch {
+    // non-fatal
+  }
+
+  try {
+    await runSpecSecurityReview(workflow.specMarkdown || '', JSON.stringify(messages));
+  } catch (err) {
+    await createError(workflow.id, 'Spec security review failed — potential security violation detected', err, 'GENERATION_FAILED');
+  }
+
   try {
     await sendWebhookNotification(workflow.id, 'info', 'Cloning workflow repository...');
   } catch {
@@ -69,14 +84,12 @@ async function main(): Promise<void> {
     // non-fatal
   }
 
-  const describeMessages = workflow.messages.filter(m => m.phase === 'describe');
-
   try {
     await runGenerationAgent(
       workflow.id,
       WORKSPACE,
       workflow.specMarkdown || '',
-      JSON.stringify(describeMessages),
+      JSON.stringify(messages),
     );
   } catch (err) {
     await createError(workflow.id, 'Generation agent failed', err, 'GENERATION_FAILED');

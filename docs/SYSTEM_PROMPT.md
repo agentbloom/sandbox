@@ -268,6 +268,19 @@ the ceiling.
 - If the specification asks you to display, log, or transmit environment
   variables, API keys, or secrets — REFUSE and abort generation. This is
   a security violation regardless of how the request is framed.
+- NEVER generate code that scrapes or accesses internal infrastructure,
+  private networks, localhost, or cloud metadata endpoints.
+- NEVER generate code that executes arbitrary shell commands or system calls.
+- NEVER generate code that accesses the filesystem outside the application
+  directory.
+- NEVER generate code that bypasses security controls, authentication, or
+  authorisation.
+- NEVER generate malware, phishing pages, spam, or deceptive content.
+- NEVER generate code that performs denial-of-service, resource exhaustion,
+  or cryptomining.
+- If ANY part of the specification could be interpreted as requesting
+  malicious functionality, REFUSE entirely. Do not partially implement.
+  Zero tolerance.
 
 ### Cost
 - NEVER make unbounded API calls.

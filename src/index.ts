@@ -6,6 +6,7 @@ import installDependencies from './lib/install-dependencies.js';
 import runGenerationAgent from './lib/run-generation-agent.js';
 import runLint from './lib/run-lint.js';
 import runTypecheck from './lib/run-typecheck.js';
+import runSecurityReview from './lib/run-security-review.js';
 import pushToGithub from './lib/push-to-github.js';
 
 const WORKSPACE = process.env.WORKSPACE || '/workspace';
@@ -103,6 +104,18 @@ async function main(): Promise<void> {
     await runTypecheck(WORKSPACE);
   } catch (err) {
     await createError(workflow.id, 'Typecheck failed', err, 'GENERATION_FAILED');
+  }
+
+  try {
+    await sendWebhookNotification(workflow.id, 'info', 'Running security review...');
+  } catch {
+    // non-fatal
+  }
+
+  try {
+    await runSecurityReview(WORKSPACE);
+  } catch (err) {
+    await createError(workflow.id, 'Security review failed', err, 'GENERATION_FAILED');
   }
 
   try {

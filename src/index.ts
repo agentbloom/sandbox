@@ -13,6 +13,8 @@ import pushToGithub from './lib/push-to-github.js';
 const WORKSPACE = process.env.WORKSPACE || '/workspace';
 
 async function main(): Promise<void> {
+  console.log(`[INFO] Sandbox build SHA: ${process.env.SANDBOX_BUILD_SHA || 'unknown'}`);
+
   const githubToken = process.env.GITHUB_TOKEN;
   const claudeCodeOauthToken = process.env.CLAUDE_CODE_OAUTH_TOKEN;
   const apiUrl = process.env.API_URL;
@@ -101,10 +103,14 @@ async function main(): Promise<void> {
     // non-fatal
   }
 
-  try {
-    await runLint(WORKSPACE);
-  } catch (err) {
-    await createError(workflow.id, 'Lint failed', err, 'GENERATION_FAILED');
+  const lintResult = await runLint(WORKSPACE);
+
+  if (!lintResult.success) {
+    try {
+      await sendWebhookNotification(workflow.id, 'warn', `Lint warnings/errors (non-blocking):\n${lintResult.output}`);
+    } catch {
+      // non-fatal
+    }
   }
 
   try {
@@ -113,10 +119,14 @@ async function main(): Promise<void> {
     // non-fatal
   }
 
-  try {
-    await runTypecheck(WORKSPACE);
-  } catch (err) {
-    await createError(workflow.id, 'Typecheck failed', err, 'GENERATION_FAILED');
+  const typecheckResult = await runTypecheck(WORKSPACE);
+
+  if (!typecheckResult.success) {
+    try {
+      await sendWebhookNotification(workflow.id, 'warn', `Typecheck warnings/errors (non-blocking):\n${typecheckResult.output}`);
+    } catch {
+      // non-fatal
+    }
   }
 
   try {

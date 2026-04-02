@@ -51,7 +51,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await runSpecSecurityReview(workflow.specMarkdown || '', JSON.stringify(messages));
+    await runSpecSecurityReview(workflow.specMarkdown || '');
   } catch (err) {
     await createError(workflow.id, 'Spec security review failed — potential security violation detected', err, 'GENERATION_FAILED');
   }

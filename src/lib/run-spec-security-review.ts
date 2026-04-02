@@ -1,4 +1,4 @@
-async function runSpecSecurityReview(specMarkdown: string, chatTranscript: string): Promise<void> {
+async function runSpecSecurityReview(specMarkdown: string): Promise<void> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
   if (!apiKey) {
@@ -29,11 +29,7 @@ If FAIL, explain the specific security concern on subsequent lines.
 
 ## Specification
 
-${specMarkdown || '(empty)'}
-
-## Conversation Transcript
-
-${chatTranscript || '(empty)'}`;
+${specMarkdown || '(empty)'}`;
 
   let response;
 

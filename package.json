@@ -6,7 +6,10 @@
     "build": "tsc",
     "start": "node dist/index.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ioredis": "^5.4.1",
+    "pino": "^9.6.0"
+  },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "typescript": "^5.9.0"

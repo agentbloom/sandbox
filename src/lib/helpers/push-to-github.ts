@@ -1,6 +1,10 @@
 import { execSync } from 'child_process';
+import logger from '../model/logger.js';
+import publishEvent from './publish-event.js';
 
-async function pushToGithub(workingDir: string, repoUrl: string, token: string): Promise<void> {
+async function pushToGithub(workflowId: string, workingDir: string, repoUrl: string, token: string): Promise<void> {
+  await publishEvent(workflowId, 'generator:progress', 'Pushing to GitHub...');
+
   const authedUrl = repoUrl.replace('https://', `https://${token}@`);
 
   execSync('git config user.email "agent@agentbloom.io"', { cwd: workingDir });
@@ -11,7 +15,7 @@ async function pushToGithub(workingDir: string, repoUrl: string, token: string):
   const status = execSync('git status --porcelain', { cwd: workingDir, encoding: 'utf-8' });
 
   if (!status.trim()) {
-    console.log('[push-to-github] No changes to commit, skipping push');
+    logger.info('[push-to-github] No changes to commit, skipping push');
     return;
   }
 

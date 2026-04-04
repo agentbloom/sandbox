@@ -20,6 +20,12 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
+  try {
+    await publishEvent(workflowId, 'generator:started', 'Starting generation...');
+  } catch {
+    // non-fatal
+  }
+
   const githubToken = process.env.GITHUB_TOKEN;
   const claudeCodeOauthToken = process.env.CLAUDE_CODE_OAUTH_TOKEN;
   const redisUrl = process.env.REDIS_URL;
@@ -51,7 +57,18 @@ async function main(): Promise<void> {
     return;
   }
 
-  await runSpecSecurityReview(workflowId, spec);
+  try {
+    await publishEvent(workflowId, 'generator:progress', 'Running spec security review...');
+  } catch {
+    // non-fatal
+  }
+
+  try {
+    await runSpecSecurityReview(workflowId, spec);
+  } catch (err) {
+    await createError(workflowId, 'Spec security review failed — potential security violation detected', err);
+    return;
+  }
 
   try {
     await publishEvent(workflowId, 'generator:progress', 'Cloning workflow repository...');
@@ -95,7 +112,20 @@ async function main(): Promise<void> {
     // non-fatal
   }
 
-  const lintResult = await runLint(WORKSPACE);
+  try {
+    await publishEvent(workflowId, 'generator:progress', 'Running lint...');
+  } catch {
+    // non-fatal
+  }
+
+  let lintResult;
+
+  try {
+    lintResult = await runLint(WORKSPACE);
+  } catch (err) {
+    await createError(workflowId, 'Failed to run lint', err);
+    return;
+  }
 
   if (!lintResult.success) {
     try {
@@ -111,7 +141,14 @@ async function main(): Promise<void> {
     // non-fatal
   }
 
-  const typecheckResult = await runTypecheck(WORKSPACE);
+  let typecheckResult;
+
+  try {
+    typecheckResult = await runTypecheck(WORKSPACE);
+  } catch (err) {
+    await createError(workflowId, 'Failed to run typecheck', err);
+    return;
+  }
 
   if (!typecheckResult.success) {
     try {
@@ -121,9 +158,31 @@ async function main(): Promise<void> {
     }
   }
 
-  await runSecurityReview(workflowId, WORKSPACE);
+  try {
+    await publishEvent(workflowId, 'generator:progress', 'Running security review...');
+  } catch {
+    // non-fatal
+  }
 
-  await pushToGithub(workflowId, WORKSPACE, githubRepoUrl, githubToken);
+  try {
+    await runSecurityReview(workflowId, WORKSPACE);
+  } catch (err) {
+    await createError(workflowId, 'Security review failed', err);
+    return;
+  }
+
+  try {
+    await publishEvent(workflowId, 'generator:progress', 'Pushing to GitHub...');
+  } catch {
+    // non-fatal
+  }
+
+  try {
+    await pushToGithub(workflowId, WORKSPACE, githubRepoUrl, githubToken);
+  } catch (err) {
+    await createError(workflowId, 'Failed to push to GitHub', err);
+    return;
+  }
 
   try {
     await publishEvent(workflowId, 'generator:complete', 'Generation complete', { githubRepoUrl });

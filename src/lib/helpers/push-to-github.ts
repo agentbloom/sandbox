@@ -3,8 +3,6 @@ import logger from '../model/logger.js';
 import publishEvent from './publish-event.js';
 
 async function pushToGithub(workflowId: string, workingDir: string, repoUrl: string, token: string): Promise<void> {
-  await publishEvent(workflowId, 'generator:progress', 'Pushing to GitHub...');
-
   const authedUrl = repoUrl.replace('https://', `https://${token}@`);
 
   execSync('git config user.email "agent@agentbloom.io"', { cwd: workingDir });

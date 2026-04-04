@@ -9,8 +9,6 @@ import getFiles from './get-files.js';
 const PROMPT_FILE = path.resolve(__dirname, '../../../docs/CODE_SECURITY_REVIEW_PROMPT.md');
 
 async function runSecurityReview(workflowId: string, workingDir: string): Promise<void> {
-  await publishEvent(workflowId, 'generator:progress', 'Running security review...');
-
   const files = await getFiles(workflowId, path.join(workingDir, 'src'), ['.ts', '.tsx']);
 
   if (files.length === 0) {

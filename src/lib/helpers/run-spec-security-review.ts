@@ -2,13 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import logger from '../model/logger.js';
 import anthropic from '../model/anthropic.js';
-import publishEvent from './publish-event.js';
 import createError from './create-error.js';
 
 const PROMPT_FILE = path.resolve(__dirname, '../../../docs/SPEC_SECURITY_REVIEW_PROMPT.md');
 
 async function runSpecSecurityReview(workflowId: string, spec: string): Promise<void> {
-  await publishEvent(workflowId, 'generator:progress', 'Running spec security review...');
 
   const promptTemplate = fs.readFileSync(PROMPT_FILE, 'utf-8');
   const prompt = promptTemplate.replace('{{spec}}', spec || '(empty)');

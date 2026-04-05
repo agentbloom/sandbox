@@ -30,7 +30,8 @@ async function main(): Promise<void> {
   const claudeCodeOauthToken = process.env.CLAUDE_CODE_OAUTH_TOKEN;
   const redisUrl = process.env.REDIS_URL;
   const githubRepoUrl = process.env.GITHUB_REPO_URL;
-  const spec = process.env.SPEC;
+  const spec = process.env.WORKFLOW_SPEC;
+  const workflowConfig = process.env.WORKFLOW_CONFIG;
 
   if (!githubToken) {
     await createError(workflowId, 'Missing GITHUB_TOKEN environment variable', new Error('GITHUB_TOKEN is not set'));
@@ -53,7 +54,7 @@ async function main(): Promise<void> {
   }
 
   if (!spec) {
-    await createError(workflowId, 'Missing SPEC environment variable', new Error('SPEC is not set'));
+    await createError(workflowId, 'Missing WORKFLOW_SPEC environment variable', new Error('WORKFLOW_SPEC is not set'));
     return;
   }
 
@@ -101,7 +102,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await runGenerationAgent(workflowId, WORKSPACE, spec);
+    await runGenerationAgent(workflowId, WORKSPACE, spec, workflowConfig || '');
   } catch (err) {
     await createError(workflowId, 'Generation agent failed', err);
   }

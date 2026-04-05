@@ -9,13 +9,35 @@ async function runGenerationAgent(
   workflowId: string,
   workingDir: string,
   spec: string,
+  workflowConfig: string,
 ): Promise<void> {
+
+  let configSection = '';
+
+  if (workflowConfig) {
+    try {
+      const config = JSON.parse(workflowConfig);
+      const lines: string[] = [];
+
+      if (!config.db) lines.push('- **Database**: NOT required. Remove all Drizzle ORM code, schema files, database connections, and db-related dependencies.');
+      if (!config.queue) lines.push('- **Queue/Redis**: NOT required. Remove all BullMQ/Redis code, queue connections, and queue-related dependencies.');
+      if (!config.email) lines.push('- **Email**: NOT required. Remove all Resend code, email templates, and email-related dependencies.');
+      if (!config.cron) lines.push('- **Cron/Scheduling**: NOT required. Remove all cron job registration, scheduling code, and instrumentation hooks.');
+      if (!config.agent) lines.push('- **AI Agent**: NOT required. Remove all Mastra agent code, tool definitions, and AI-related dependencies.');
+
+      if (lines.length > 0) {
+        configSection = `\n\n## Infrastructure Config\n\nThe following features are NOT enabled for this workflow. Remove all related code, files, and dependencies:\n\n${lines.join('\n')}\n\nOnly keep code for features that are enabled.`;
+      }
+    } catch {
+      // invalid config JSON, skip
+    }
+  }
 
   const prompt = `Generate the application according to the following specification.
 
 ## Specification
 
-${spec}
+${spec}${configSection}
 
 Start by reading the existing codebase structure, then implement all required changes.`;
 

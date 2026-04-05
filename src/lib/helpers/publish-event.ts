@@ -22,7 +22,7 @@ async function publishEvent(workflowId: string, type: EventType, message: string
     data,
   };
 
-  const channel = `workflow:${workflowId}`;
+  const channel = `generator:${workflowId}`;
 
   logger.info(`[${type}] ${message}`);
 

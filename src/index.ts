@@ -113,12 +113,6 @@ async function main(): Promise<void> {
     // non-fatal
   }
 
-  try {
-    await publishEvent(workflowId, 'generator:progress', 'Running lint...');
-  } catch {
-    // non-fatal
-  }
-
   let lintResult;
 
   try {

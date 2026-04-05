@@ -19,14 +19,14 @@ async function runGenerationAgent(
       const config = JSON.parse(workflowConfig);
       const lines: string[] = [];
 
-      if (!config.db) lines.push('- **Database**: NOT required. Remove all Drizzle ORM code, schema files, database connections, and db-related dependencies.');
-      if (!config.queue) lines.push('- **Queue/Redis**: NOT required. Remove all BullMQ/Redis code, queue connections, and queue-related dependencies.');
-      if (!config.email) lines.push('- **Email**: NOT required. Remove all Resend code, email templates, and email-related dependencies.');
-      if (!config.cron) lines.push('- **Cron/Scheduling**: NOT required. Remove all cron job registration, scheduling code, and instrumentation hooks.');
-      if (!config.agent) lines.push('- **AI Agent**: NOT required. Remove all Mastra agent code, tool definitions, and AI-related dependencies.');
+      if (!config.db) lines.push('- **Database**: NOT required. Remove all Drizzle ORM code, schema files (`src/db/`), database connections, db-related dependencies from package.json (`drizzle-orm`, `drizzle-kit`, `pg`, `@types/pg`), and db-related scripts from package.json (`db:push`, `db:generate`, `db:migrate`, `db:studio`).');
+      if (!config.queue) lines.push('- **Queue/Redis**: NOT required. Remove all BullMQ/Redis code, queue connections, and queue-related dependencies from package.json (`bullmq`, `ioredis`).');
+      if (!config.email) lines.push('- **Email**: NOT required. Remove all Resend code, email templates, and email-related dependencies from package.json (`resend`).');
+      if (!config.cron) lines.push('- **Cron/Scheduling**: NOT required. Remove all cron job registration, scheduling code, instrumentation hooks (`src/instrumentation.ts`), and cron-related dependencies from package.json (`cron`, `node-cron`).');
+      if (!config.agent) lines.push('- **AI Agent**: NOT required. Remove all Mastra agent code, tool definitions, and AI-related dependencies from package.json (`@mastra/core`, `@ai-sdk/anthropic`).');
 
       if (lines.length > 0) {
-        configSection = `\n\n## Infrastructure Config\n\nThe following features are NOT enabled for this workflow. Remove all related code, files, and dependencies:\n\n${lines.join('\n')}\n\nOnly keep code for features that are enabled.`;
+        configSection = `\n\n## Infrastructure Config\n\nThe following features are NOT enabled for this workflow. You MUST remove all related code, files, dependencies, and package.json scripts:\n\n${lines.join('\n')}\n\nOnly keep code for features that are enabled. Ensure package.json only contains dependencies and scripts for enabled features.`;
       }
     } catch {
       // invalid config JSON, skip

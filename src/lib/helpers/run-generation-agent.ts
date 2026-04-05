@@ -39,6 +39,10 @@ async function runGenerationAgent(
 
 ${spec}${configSection}
 
+## Deployment
+
+The production start command is \`pnpm start\`. If the application needs to run database migrations or other setup before starting, update the \`start\` script in package.json to include those steps (e.g. \`"start": "drizzle-kit push --force && next start"\`).
+
 Start by reading the existing codebase structure, then implement all required changes.`;
 
   const args = [

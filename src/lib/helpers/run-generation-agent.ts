@@ -63,21 +63,39 @@ Start by reading the existing codebase structure, then implement all required ch
     },
   });
 
-  child.stdout.on('data', (data: Buffer) => {
-    logger.debug(data.toString());
+  let lastStdout = '';
+  let lastStderr = '';
+
+  child.stdout.on('data', (data: Buffer): void => {
+    const text = data.toString();
+    lastStdout = text.slice(-2000);
+    logger.info({ source: 'claude-code' }, text.slice(0, 500));
   });
 
-  child.stderr.on('data', (data: Buffer) => {
-    logger.error(data.toString());
+  child.stderr.on('data', (data: Buffer): void => {
+    const text = data.toString();
+    lastStderr = text.slice(-2000);
+    logger.error({ source: 'claude-code' }, text.slice(0, 500));
+  });
+
+  child.on('error', (err: Error): void => {
+    logger.error({ err }, 'Failed to spawn Claude Code process');
   });
 
   return new Promise((resolve, reject) => {
-    child.on('close', async (code) => {
+    child.on('close', async (code: number | null): Promise<void> => {
       if (code === 0) {
-        await publishEvent(workflowId, 'generator:progress', 'Generation agent complete');
+        try {
+          await publishEvent(workflowId, 'generator:progress', 'Generation agent complete');
+        } catch {
+          // non-fatal
+        }
+
         resolve();
       } else {
-        reject(new Error(`Claude Code exited with code ${code}`));
+        const detail = lastStderr || lastStdout || 'No output captured';
+        logger.error({ code, detail }, 'Claude Code exited with non-zero code');
+        reject(new Error(`Claude Code exited with code ${code}: ${detail.slice(0, 500)}`));
       }
     });
   });

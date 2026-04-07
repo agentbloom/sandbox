@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import * as path from 'path';
-import publishEvent from '@/lib/helpers/publish-event.js';
-import logger from '@/lib/model/logger.js';
+import publishEvent from './publish-event.js';
+import logger from '../model/logger.js';
 
 const SYSTEM_PROMPT_FILE = path.resolve(__dirname, '../../../docs/SYSTEM_PROMPT.md');
 

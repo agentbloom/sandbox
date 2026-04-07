@@ -1,5 +1,5 @@
-import redis from '@/lib/model/redis.js';
-import logger from '@/lib/model/logger.js';
+import redis from '../model/redis.js';
+import logger from '../model/logger.js';
 
 type EventType = 'generator:started' | 'generator:progress' | 'generator:complete' | 'generator:failed';
 

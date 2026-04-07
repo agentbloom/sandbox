@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import createError from '@/lib/helpers/create-error.js';
+import createError from './create-error.js';
 
 async function getFiles(workflowId: string, dir: string, extensions: string[]): Promise<string[]> {
   const results: string[] = [];

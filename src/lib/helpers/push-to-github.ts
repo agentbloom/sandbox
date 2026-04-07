@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
-import logger from '../model/logger.js';
-import publishEvent from './publish-event.js';
+import logger from '@/lib/model/logger.js';
+import publishEvent from '@/lib/helpers/publish-event.js';
 
 async function pushToGithub(workflowId: string, workingDir: string, repoUrl: string, token: string): Promise<void> {
   const authedUrl = repoUrl.replace('https://', `https://${token}@`);

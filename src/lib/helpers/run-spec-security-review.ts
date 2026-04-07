@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import logger from '../model/logger.js';
-import anthropic from '../model/anthropic.js';
-import createError from './create-error.js';
+import logger from '@/lib/model/logger.js';
+import anthropic from '@/lib/model/anthropic.js';
+import createError from '@/lib/helpers/create-error.js';
 
 const PROMPT_FILE = path.resolve(__dirname, '../../../docs/SPEC_SECURITY_REVIEW_PROMPT.md');
 

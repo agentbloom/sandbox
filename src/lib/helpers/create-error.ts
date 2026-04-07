@@ -1,4 +1,4 @@
-import publishEvent from './publish-event.js';
+import publishEvent from '@/lib/helpers/publish-event.js';
 
 async function createError(workflowId: string, message: string, err: unknown): Promise<never> {
   const detail = err instanceof Error ? err.message : String(err);

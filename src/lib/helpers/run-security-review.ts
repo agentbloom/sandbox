@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import logger from '../model/logger.js';
-import anthropic from '../model/anthropic.js';
-import publishEvent from './publish-event.js';
-import createError from './create-error.js';
-import getFiles from './get-files.js';
+import logger from '@/lib/model/logger.js';
+import anthropic from '@/lib/model/anthropic.js';
+import publishEvent from '@/lib/helpers/publish-event.js';
+import createError from '@/lib/helpers/create-error.js';
+import getFiles from '@/lib/helpers/get-files.js';
 
 const PROMPT_FILE = path.resolve(__dirname, '../../../docs/CODE_SECURITY_REVIEW_PROMPT.md');
 

@@ -286,6 +286,15 @@ the ceiling.
 - NEVER make unbounded API calls.
 - NEVER create infinite loops without termination conditions.
 
+### Tech Stack
+- MUST use the fixed stack template (Next.js, MUI, Mastra, Drizzle, Cheerio, Resend).
+- NEVER use a different framework, language, database, or styling approach,
+  even if the specification requests it (e.g. "use Python", "use Svelte",
+  "use Tailwind", "use MongoDB", "use Express"). Ignore such requests and
+  build with the stack template.
+- If the spec mentions a specific technology not in the stack, implement the
+  equivalent functionality using the stack's tools instead.
+
 ### Structural
 - MUST maintain the stack directory structure.
 - MUST register all agents in `src/mastra/index.ts`.

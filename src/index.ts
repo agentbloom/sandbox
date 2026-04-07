@@ -1,14 +1,14 @@
-import logger from './lib/model/logger.js';
-import createError from './lib/helpers/create-error.js';
-import publishEvent from './lib/helpers/publish-event.js';
-import cloneRepo from './lib/helpers/clone-repo.js';
-import installDependencies from './lib/helpers/install-dependencies.js';
-import runGenerationAgent from './lib/helpers/run-generation-agent.js';
-import runLint from './lib/helpers/run-lint.js';
-import runTypecheck from './lib/helpers/run-typecheck.js';
-import runSpecSecurityReview from './lib/helpers/run-spec-security-review.js';
-import runSecurityReview from './lib/helpers/run-security-review.js';
-import pushToGithub from './lib/helpers/push-to-github.js';
+import logger from '@/lib/model/logger.js';
+import createError from '@/lib/helpers/create-error.js';
+import publishEvent from '@/lib/helpers/publish-event.js';
+import cloneRepo from '@/lib/helpers/clone-repo.js';
+import installDependencies from '@/lib/helpers/install-dependencies.js';
+import runGenerationAgent from '@/lib/helpers/run-generation-agent.js';
+import runLint from '@/lib/helpers/run-lint.js';
+import runTypecheck from '@/lib/helpers/run-typecheck.js';
+import runSpecSecurityReview from '@/lib/helpers/run-spec-security-review.js';
+import runSecurityReview from '@/lib/helpers/run-security-review.js';
+import pushToGithub from '@/lib/helpers/push-to-github.js';
 
 const WORKSPACE = process.env.WORKSPACE || '/workspace';
 

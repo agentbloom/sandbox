@@ -10,7 +10,7 @@ import runSpecSecurityReview from './lib/helpers/run-spec-security-review.js';
 import runSecurityReview from './lib/helpers/run-security-review.js';
 import pushToGithub from './lib/helpers/push-to-github.js';
 
-const WORKSPACE = process.env.WORKSPACE || '/workspace';
+const WORKSPACE: string = process.env.WORKSPACE || '/workspace';
 
 async function main(): Promise<void> {
   const workflowId = process.env.WORKFLOW_ID;

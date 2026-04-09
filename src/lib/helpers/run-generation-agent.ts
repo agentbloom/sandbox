@@ -52,7 +52,7 @@ Start by reading the existing codebase structure, then implement all required ch
     '--output-format', 'stream-json',
     '--verbose',
     '--include-partial-messages',
-    '--max-turns', '20',
+    '--max-turns', '50',
   ];
 
   const child = spawn('claude', args, {
@@ -104,7 +104,10 @@ Start by reading the existing codebase structure, then implement all required ch
           continue;
         }
 
-        const message = block.text.trim();
+        // Strip trailing colons — the chat renders each message as a standalone
+        // bubble and a dangling colon looks broken. Also strips any trailing
+        // whitespace/punctuation noise around the colon.
+        const message = block.text.trim().replace(/[\s:]+$/, '');
 
         if (message.length < 2) {
           continue;

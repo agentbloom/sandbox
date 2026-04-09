@@ -52,7 +52,7 @@ Start by reading the existing codebase structure, then implement all required ch
     '--output-format', 'stream-json',
     '--verbose',
     '--include-partial-messages',
-    '--max-turns', '100',
+    '--max-turns', '20',
   ];
 
   const child = spawn('claude', args, {

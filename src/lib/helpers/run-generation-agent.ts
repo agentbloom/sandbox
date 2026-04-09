@@ -65,11 +65,58 @@ Start by reading the existing codebase structure, then implement all required ch
 
   let lastStdout = '';
   let lastStderr = '';
+  let buffer = '';
 
-  child.stdout.on('data', (data: Buffer): void => {
+  child.stdout.on('data', async (data: Buffer): Promise<void> => {
     const text = data.toString();
     lastStdout = text.slice(-2000);
-    logger.info({ source: 'claude-code' }, text.slice(0, 500));
+    logger.debug({ source: 'claude-code' }, text.slice(0, 500));
+
+    // Claude Code emits one JSON object per line in stream-json mode.
+    // We only surface human-readable assistant text — no token deltas, no
+    // tool calls, no system messages — to keep the chat readable while still
+    // giving the user a sense of what the generator is saying.
+    buffer += text;
+    const lines = buffer.split('\n');
+    buffer = lines.pop() ?? '';
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+
+      if (!trimmed) {
+        continue;
+      }
+
+      let event: { type?: string; message?: { content?: Array<{ type?: string; text?: string }> } };
+
+      try {
+        event = JSON.parse(trimmed);
+      } catch {
+        continue;
+      }
+
+      if (event.type !== 'assistant' || !event.message?.content) {
+        continue;
+      }
+
+      for (const block of event.message.content) {
+        if (block.type !== 'text' || !block.text) {
+          continue;
+        }
+
+        const message = block.text.trim();
+
+        if (message.length < 2) {
+          continue;
+        }
+
+        try {
+          await publishEvent(workflowId, 'generator:progress', message);
+        } catch {
+          // non-fatal
+        }
+      }
+    }
   });
 
   child.stderr.on('data', (data: Buffer): void => {

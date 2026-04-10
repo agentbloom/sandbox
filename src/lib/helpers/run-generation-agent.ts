@@ -85,12 +85,24 @@ Start by reading the existing codebase structure, then implement all required ch
     '--allowed-tools', 'grep_search',
   ];
 
+  // Exclude planning/meta tools that burn turns without producing code.
+  // Under --approval-mode yolo, --allowed-tools is just an auto-approve
+  // hint — it doesn't actually restrict the toolset. --exclude-tools does.
+  const excludeToolsFlags = [
+    '--exclude-tools', 'todo_write',
+    '--exclude-tools', 'save_memory',
+    '--exclude-tools', 'web_fetch',
+    '--exclude-tools', 'ask_user_question',
+    '--exclude-tools', 'exit_plan_mode',
+  ];
+
   const args = [
     '--auth-type', 'openai',
     '-m', 'qwen3-coder-plus',
     '-p', prompt,
     '--append-system-prompt', systemPrompt,
     ...allowedToolsFlags,
+    ...excludeToolsFlags,
     '--output-format', 'stream-json',
     '--max-session-turns', '100',
     '--approval-mode', 'yolo',

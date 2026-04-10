@@ -2,6 +2,7 @@ import logger from './lib/model/logger.js';
 import createError from './lib/helpers/create-error.js';
 import publishEvent from './lib/helpers/publish-event.js';
 import cloneRepo from './lib/helpers/clone-repo.js';
+import configureTemplate from './lib/helpers/configure-template.js';
 import installDependencies from './lib/helpers/install-dependencies.js';
 import runGenerationAgent from './lib/helpers/run-generation-agent.js';
 import runLint from './lib/helpers/run-lint.js';
@@ -87,6 +88,18 @@ async function main(): Promise<void> {
     await cloneRepo(githubRepoUrl, githubToken, WORKSPACE);
   } catch (err) {
     await createError(workflowId, 'Failed to clone repo', err);
+  }
+
+  try {
+    await publishEvent(workflowId, 'generator:progress', 'Configuring template...');
+  } catch {
+    // non-fatal
+  }
+
+  try {
+    await configureTemplate(WORKSPACE, workflowConfig || '');
+  } catch (err) {
+    await createError(workflowId, 'Failed to configure template', err);
   }
 
   try {

@@ -105,6 +105,11 @@ Start by reading the existing codebase structure, then implement all required ch
   let lastStdout = '';
   let lastStderr = '';
   let buffer = '';
+  // Captured the moment we detect a fatal upstream error (an [API Error: ...]
+  // wrapped in an assistant text block, or a result event with is_error: true).
+  // The close handler reads this and rejects so the outer try/catch in
+  // sandbox/src/index.ts can route through createError → generator:failed.
+  let detectedError: string | null = null;
 
   child.stdout.on('data', async (data: Buffer): Promise<void> => {
     const text = data.toString();
@@ -128,11 +133,30 @@ Start by reading the existing codebase structure, then implement all required ch
         continue;
       }
 
-      let event: { type?: string; message?: { content?: Array<{ type?: string; text?: string }> } };
+      let event: {
+        type?: string;
+        subtype?: string;
+        is_error?: boolean;
+        result?: string;
+        error?: { message?: string };
+        message?: { content?: Array<{ type?: string; text?: string }> };
+      };
 
       try {
         event = JSON.parse(trimmed);
       } catch {
+        continue;
+      }
+
+      // Path 1: qwen-code emits a `result` event with is_error: true when it
+      // gives up on a turn (network error, timeout, hard model failure).
+      if (event.type === 'result' && event.is_error) {
+        if (!detectedError) {
+          detectedError = event.error?.message || event.result || `qwen-code result error (${event.subtype ?? 'unknown'})`;
+          logger.error({ source: 'qwen-code', detectedError }, 'qwen-code result event reported is_error');
+          child.kill('SIGTERM');
+        }
+
         continue;
       }
 
@@ -142,6 +166,20 @@ Start by reading the existing codebase structure, then implement all required ch
 
       for (const block of event.message.content) {
         if (block.type !== 'text' || !block.text) {
+          continue;
+        }
+
+        // Path 2: qwen-code wraps upstream LLM API errors (4xx/5xx from the
+        // OpenAI-compatible endpoint) as assistant text content of the form
+        // `[API Error: <status> <message>]`. The CLI exits 0 in that case, so
+        // the close handler can't catch it — we have to detect it here.
+        if (block.text.trimStart().startsWith('[API Error')) {
+          if (!detectedError) {
+            detectedError = block.text.trim();
+            logger.error({ source: 'qwen-code', detectedError }, 'qwen-code surfaced an upstream API error');
+            child.kill('SIGTERM');
+          }
+
           continue;
         }
 
@@ -175,6 +213,11 @@ Start by reading the existing codebase structure, then implement all required ch
 
   return new Promise((resolve, reject) => {
     child.on('close', async (code: number | null): Promise<void> => {
+      if (detectedError) {
+        reject(new Error(detectedError));
+        return;
+      }
+
       if (code === 0) {
         try {
           await publishEvent(workflowId, 'generator:progress', 'Generation agent complete');
@@ -183,11 +226,12 @@ Start by reading the existing codebase structure, then implement all required ch
         }
 
         resolve();
-      } else {
-        const detail = lastStderr || lastStdout || 'No output captured';
-        logger.error({ code, detail }, 'qwen-code exited with non-zero code');
-        reject(new Error(`qwen-code exited with code ${code}: ${detail.slice(0, 500)}`));
+        return;
       }
+
+      const detail = lastStderr || lastStdout || 'No output captured';
+      logger.error({ code, detail }, 'qwen-code exited with non-zero code');
+      reject(new Error(`qwen-code exited with code ${code}: ${detail.slice(0, 500)}`));
     });
   });
 }

@@ -92,7 +92,7 @@ Start by reading the existing codebase structure, then implement all required ch
     '--append-system-prompt', systemPrompt,
     ...allowedToolsFlags,
     '--output-format', 'stream-json',
-    '--max-session-turns', '50',
+    '--max-session-turns', '100',
     '--approval-mode', 'yolo',
   ];
 

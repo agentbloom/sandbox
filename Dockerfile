@@ -5,7 +5,7 @@ ENV SANDBOX_BUILD_SHA=$SANDBOX_BUILD_SHA
 
 RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN npm install -g @anthropic-ai/claude-code
+RUN npm install -g @qwen-code/qwen-code
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml* ./

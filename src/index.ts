@@ -27,7 +27,8 @@ async function main(): Promise<void> {
   }
 
   const githubToken = process.env.GITHUB_TOKEN;
-  const claudeCodeOauthToken = process.env.CLAUDE_CODE_OAUTH_TOKEN;
+  const qwenApiKey = process.env.QWEN_API_KEY;
+  const qwenBaseUrl = process.env.QWEN_BASE_URL;
   const redisUrl = process.env.REDIS_URL;
   const githubRepoUrl = process.env.GITHUB_REPO_URL;
   const spec = process.env.WORKFLOW_SPEC;
@@ -38,8 +39,13 @@ async function main(): Promise<void> {
     return;
   }
 
-  if (!claudeCodeOauthToken) {
-    await createError(workflowId, 'Missing CLAUDE_CODE_OAUTH_TOKEN environment variable', new Error('CLAUDE_CODE_OAUTH_TOKEN is not set'));
+  if (!qwenApiKey) {
+    await createError(workflowId, 'Missing QWEN_API_KEY environment variable', new Error('QWEN_API_KEY is not set'));
+    return;
+  }
+
+  if (!qwenBaseUrl) {
+    await createError(workflowId, 'Missing QWEN_BASE_URL environment variable', new Error('QWEN_BASE_URL is not set'));
     return;
   }
 

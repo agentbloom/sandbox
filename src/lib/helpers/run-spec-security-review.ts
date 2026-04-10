@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import logger from '../model/logger.js';
-import anthropic from '../model/anthropic.js';
+import makeAiCall from './make-ai-call.js';
 import createError from './create-error.js';
 
 const PROMPT_FILE = path.resolve(__dirname, '../../../docs/SPEC_SECURITY_REVIEW_PROMPT.md');
@@ -13,9 +13,9 @@ async function runSpecSecurityReview(workflowId: string, spec: string): Promise<
   let result;
 
   try {
-    result = await anthropic.createMessage('claude-sonnet-4-20250514', [{ role: 'user', content: prompt }]);
+    result = await makeAiCall('qwen-plus', [{ role: 'user', content: prompt }]);
   } catch (error) {
-    logger.error({ err: error }, '[spec-security-review] Failed to call Anthropic API');
+    logger.error({ err: error }, '[spec-security-review] Failed to call Qwen API');
     return;
   }
 

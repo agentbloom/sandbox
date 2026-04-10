@@ -77,7 +77,7 @@ src/
 ### Stack
 
 - Framework: Next.js 16 (App Router, TypeScript, Material UI v7)
-- Orchestration: Mastra (`@mastra/core`) with Anthropic Claude via `@ai-sdk/anthropic`
+- Orchestration: Mastra (`@mastra/core`) with Qwen via `@ai-sdk/openai` (OpenAI-compatible mode against the Qwen DashScope endpoint)
 - Memory: `@mastra/memory` for agent conversation memory
 - RAG: `@mastra/rag` for retrieval-augmented generation
 - Storage: `@mastra/pg` for Mastra's PostgreSQL storage backend

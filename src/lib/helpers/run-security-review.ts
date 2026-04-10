@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import logger from '../model/logger.js';
-import anthropic from '../model/anthropic.js';
-import publishEvent from './publish-event.js';
+import makeAiCall from './make-ai-call.js';
 import createError from './create-error.js';
 import getFiles from './get-files.js';
 
@@ -10,7 +9,7 @@ const PROMPT_FILE = path.resolve(__dirname, '../../../docs/CODE_SECURITY_REVIEW_
 
 // Hard caps to keep the security review prompt within a reasonable token
 // budget. The full src/ tree of a generated app can run to hundreds of
-// thousands of tokens; we cap each file and the total to keep one Sonnet
+// thousands of tokens; we cap each file and the total to keep one Qwen
 // call cheap and bounded.
 const MAX_FILE_BYTES = 12_000;
 const MAX_TOTAL_BYTES = 150_000;
@@ -51,9 +50,9 @@ async function runSecurityReview(workflowId: string, workingDir: string): Promis
   let result;
 
   try {
-    result = await anthropic.createMessage('claude-sonnet-4-20250514', [{ role: 'user', content: prompt }]);
+    result = await makeAiCall('qwen-plus', [{ role: 'user', content: prompt }]);
   } catch (error) {
-    logger.error({ err: error }, '[security-review] Failed to call Anthropic API');
+    logger.error({ err: error }, '[security-review] Failed to call Qwen API');
     return;
   }
 

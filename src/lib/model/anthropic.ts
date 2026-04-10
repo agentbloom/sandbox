@@ -9,11 +9,15 @@ export interface AnthropicResponse {
   content: Array<{ text: string }>;
 }
 
-const apiKey = process.env.ANTHROPIC_API_KEY;
-
+// IMPORTANT: this deliberately reads CLAUDE_API_KEY, not
+// ANTHROPIC_API_KEY. ANTHROPIC_API_KEY must NOT exist in this container's
+// environment, otherwise Claude Code will pick it up and bill every
+// generation through the API key instead of the OAuth subscription token.
 async function createMessage(model: string, messages: AnthropicMessage[], maxTokens: number = 1024): Promise<AnthropicResponse> {
+  const apiKey = process.env.CLAUDE_API_KEY;
+
   if (!apiKey) {
-    throw new Error('ANTHROPIC_API_KEY environment variable is not set');
+    throw new Error('CLAUDE_API_KEY environment variable is not set');
   }
 
   const response = await fetch(`${ANTHROPIC_API_URL}/messages`, {

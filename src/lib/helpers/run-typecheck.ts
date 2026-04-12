@@ -7,7 +7,7 @@ interface TypecheckResult {
 
 async function runTypecheck(workingDir: string): Promise<TypecheckResult> {
   try {
-    const output = execSync('npx tsc --noEmit 2>&1', { cwd: workingDir, encoding: 'utf-8' });
+    const output = execSync('pnpm run typecheck 2>&1', { cwd: workingDir, encoding: 'utf-8' });
 
     return { success: true, output };
   } catch (err) {

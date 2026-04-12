@@ -76,7 +76,7 @@ Start by reading AGENTS.md and globbing the file layout, then implement all requ
 
   const args = [
     '--auth-type', 'openai',
-    '-m', 'qwen3-coder-plus',
+    '-m', 'qwen3-max',
     '-p', prompt,
     '--append-system-prompt', systemPrompt,
     ...allowedToolsFlags,

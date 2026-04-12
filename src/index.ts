@@ -2,7 +2,7 @@ import logger from './lib/model/logger.js';
 import createError from './lib/helpers/create-error.js';
 import publishEvent from './lib/helpers/publish-event.js';
 import cloneRepo from './lib/helpers/clone-repo.js';
-import configureTemplate from './lib/helpers/configure-template.js';
+
 import installDependencies from './lib/helpers/install-dependencies.js';
 import runGenerationAgent from './lib/helpers/run-generation-agent.js';
 import runLint from './lib/helpers/run-lint.js';
@@ -33,7 +33,6 @@ async function main(): Promise<void> {
   const redisUrl = process.env.REDIS_URL;
   const githubRepoUrl = process.env.GITHUB_REPO_URL;
   const spec = process.env.WORKFLOW_SPEC;
-  const workflowConfig = process.env.WORKFLOW_CONFIG;
 
   if (!githubToken) {
     await createError(workflowId, 'Missing GITHUB_TOKEN environment variable', new Error('GITHUB_TOKEN is not set'));
@@ -91,18 +90,6 @@ async function main(): Promise<void> {
   }
 
   try {
-    await publishEvent(workflowId, 'generator:progress', 'Configuring template...');
-  } catch {
-    // non-fatal
-  }
-
-  try {
-    await configureTemplate(WORKSPACE, workflowConfig || '');
-  } catch (err) {
-    await createError(workflowId, 'Failed to configure template', err);
-  }
-
-  try {
     await publishEvent(workflowId, 'generator:progress', 'Installing dependencies...');
   } catch {
     // non-fatal
@@ -121,7 +108,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await runGenerationAgent(workflowId, WORKSPACE, spec, workflowConfig || '');
+    await runGenerationAgent(workflowId, WORKSPACE, spec);
   } catch (err) {
     await createError(workflowId, 'Generation agent failed', err);
   }

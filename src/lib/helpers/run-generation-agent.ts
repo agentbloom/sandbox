@@ -4,52 +4,30 @@ import * as path from 'path';
 import publishEvent from './publish-event.js';
 import logger from '../model/logger.js';
 
-const SYSTEM_PROMPT_FILE = path.resolve(__dirname, '../../../docs/SYSTEM_PROMPT.md');
-
 async function runGenerationAgent(
   workflowId: string,
   workingDir: string,
   spec: string,
-  workflowConfig: string,
 ): Promise<void> {
-
-  let configSection = '';
-
-  if (workflowConfig) {
-    try {
-      const config = JSON.parse(workflowConfig);
-      const lines: string[] = [];
-
-      if (!config.db) lines.push('- **Database**: NOT required. Remove all Drizzle ORM code, schema files (`src/db/`), database connections, db-related dependencies from package.json (`drizzle-orm`, `drizzle-kit`, `pg`, `@types/pg`), and db-related scripts from package.json (`db:push`, `db:generate`, `db:migrate`, `db:studio`).');
-      if (!config.queue) lines.push('- **Queue/Redis**: NOT required. Remove all BullMQ/Redis code, queue connections, and queue-related dependencies from package.json (`bullmq`, `ioredis`).');
-      if (!config.email) lines.push('- **Email**: NOT required. Remove all Resend code, email templates, and email-related dependencies from package.json (`resend`).');
-      if (!config.cron) lines.push('- **Cron/Scheduling**: NOT required. Remove all cron job registration, scheduling code, instrumentation hooks (`src/instrumentation.ts`), and cron-related dependencies from package.json (`cron`, `node-cron`).');
-      if (!config.agent) lines.push('- **AI Agent**: NOT required. Remove all Mastra agent code, tool definitions, and AI-related dependencies from package.json (`@mastra/core`, `@ai-sdk/openai`).');
-
-      if (lines.length > 0) {
-        configSection = `\n\n## Infrastructure Config\n\nThe following features are NOT enabled for this workflow. You MUST remove all related code, files, dependencies, and package.json scripts:\n\n${lines.join('\n')}\n\nOnly keep code for features that are enabled. Ensure package.json only contains dependencies and scripts for enabled features.`;
-      }
-    } catch {
-      // invalid config JSON, skip
-    }
-  }
 
   const prompt = `Generate the application according to the following specification.
 
 ## Specification
 
-${spec}${configSection}
+${spec}
 
 ## Deployment
 
-The production start command is \`pnpm start\`. If the application needs to run database migrations or other setup before starting, update the \`start\` script in package.json to include those steps (e.g. \`"start": "drizzle-kit push --force && next start"\`).
+The production start command is \`node server/dist/server.js\`. If the application needs to run database migrations or other setup before starting, update the root \`start\` script in package.json to include those steps (e.g. \`"start": "cd server && drizzle-kit push --force && cd .. && node server/dist/server.js"\`).
 
-Start by reading the existing codebase structure, then implement all required changes.`;
+Start by reading AGENTS.md and globbing the file layout, then implement all required changes.`;
 
-  // qwen-code's --append-system-prompt takes a STRING, not a file path
-  // (unlike Claude Code's --append-system-prompt-file). Read the file
+  // The system prompt is the stack template's AGENTS.md, which lives in the
+  // working directory alongside the workflow's cloned repo. qwen-code's
+  // --append-system-prompt takes a STRING, not a file path — read the file
   // ourselves and pass the contents inline.
-  const systemPrompt = fs.readFileSync(SYSTEM_PROMPT_FILE, 'utf-8');
+  const systemPromptFile = path.resolve(workingDir, 'AGENTS.md');
+  const systemPrompt = fs.readFileSync(systemPromptFile, 'utf-8');
 
   const qwenApiKey = process.env.QWEN_API_KEY;
   const qwenBaseUrl = process.env.QWEN_BASE_URL;

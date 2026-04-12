@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import createError from './create-error.js';
 
-async function getFiles(workflowId: string, dir: string, extensions: string[]): Promise<string[]> {
+async function getFiles(dir: string, extensions: string[]): Promise<string[]> {
   const results: string[] = [];
 
   try {
@@ -12,13 +11,14 @@ async function getFiles(workflowId: string, dir: string, extensions: string[]): 
       const fullPath = path.join(dir, entry.name);
 
       if (entry.isDirectory() && entry.name !== 'node_modules' && entry.name !== '.next' && entry.name !== '.git') {
-        results.push(...await getFiles(workflowId, fullPath, extensions));
+        results.push(...await getFiles(fullPath, extensions));
       } else if (entry.isFile() && extensions.some(e => entry.name.endsWith(e))) {
         results.push(fullPath);
       }
     }
-  } catch (err) {
-    await createError(workflowId, 'Failed to read files', err);
+  } catch {
+    // Directory may not exist (e.g. client/src or server/src missing).
+    // Return empty rather than failing the generation.
   }
 
   return results;

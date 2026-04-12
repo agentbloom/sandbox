@@ -5,8 +5,6 @@ import cloneRepo from './lib/helpers/clone-repo.js';
 
 import installDependencies from './lib/helpers/install-dependencies.js';
 import runGenerationAgent from './lib/helpers/run-generation-agent.js';
-import runLint from './lib/helpers/run-lint.js';
-import runTypecheck from './lib/helpers/run-typecheck.js';
 import runSpecSecurityReview from './lib/helpers/run-spec-security-review.js';
 import runSecurityReview from './lib/helpers/run-security-review.js';
 import pushToGithub from './lib/helpers/push-to-github.js';
@@ -111,52 +109,6 @@ async function main(): Promise<void> {
     await runGenerationAgent(workflowId, WORKSPACE, spec);
   } catch (err) {
     await createError(workflowId, 'Generation agent failed', err);
-  }
-
-  try {
-    await publishEvent(workflowId, 'generator:progress', 'Running lint...');
-  } catch {
-    // non-fatal
-  }
-
-  let lintResult;
-
-  try {
-    lintResult = await runLint(WORKSPACE);
-  } catch (err) {
-    await createError(workflowId, 'Failed to run lint', err);
-    return;
-  }
-
-  if (!lintResult.success) {
-    try {
-      await publishEvent(workflowId, 'generator:progress', `Lint warnings/errors (non-blocking):\n${lintResult.output}`);
-    } catch {
-      // non-fatal
-    }
-  }
-
-  try {
-    await publishEvent(workflowId, 'generator:progress', 'Running typecheck...');
-  } catch {
-    // non-fatal
-  }
-
-  let typecheckResult;
-
-  try {
-    typecheckResult = await runTypecheck(WORKSPACE);
-  } catch (err) {
-    await createError(workflowId, 'Failed to run typecheck', err);
-    return;
-  }
-
-  if (!typecheckResult.success) {
-    try {
-      await publishEvent(workflowId, 'generator:progress', `Typecheck warnings/errors (non-blocking):\n${typecheckResult.output}`);
-    } catch {
-      // non-fatal
-    }
   }
 
   try {

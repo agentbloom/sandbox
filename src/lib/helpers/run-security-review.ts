@@ -15,7 +15,9 @@ const MAX_FILE_BYTES = 12_000;
 const MAX_TOTAL_BYTES = 150_000;
 
 async function runSecurityReview(workflowId: string, workingDir: string): Promise<void> {
-  const files = await getFiles(workflowId, path.join(workingDir, 'src'), ['.ts', '.tsx']);
+  const serverFiles = await getFiles(path.join(workingDir, 'server', 'src'), ['.ts', '.tsx']);
+  const clientFiles = await getFiles(path.join(workingDir, 'client', 'src'), ['.ts', '.tsx']);
+  const files = [...serverFiles, ...clientFiles];
 
   if (files.length === 0) {
     return;

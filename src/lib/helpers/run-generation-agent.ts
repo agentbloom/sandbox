@@ -52,6 +52,7 @@ Start by reading AGENTS.md and globbing the file layout, then implement all requ
     '--output-format', 'stream-json',
     '--model', 'opus',
     '--dangerously-skip-permissions',
+    '--verbose',
     '--bare',
   ];
 

@@ -45,23 +45,14 @@ Start by reading AGENTS.md and globbing the file layout, then implement all requ
 
   delete childEnv.ANTHROPIC_API_KEY;
 
-  const allowedToolsFlags = [
-    '--allowedTools', 'Bash',
-    '--allowedTools', 'Read',
-    '--allowedTools', 'Write',
-    '--allowedTools', 'Edit',
-    '--allowedTools', 'Glob',
-    '--allowedTools', 'Grep',
-  ];
-
   const args = [
     '-p', prompt,
     '--append-system-prompt', systemPrompt,
-    ...allowedToolsFlags,
+    '--tools', 'Bash,Read,Write,Edit,Glob,Grep',
     '--output-format', 'stream-json',
-    '--max-turns', '100',
     '--model', 'opus',
-    '--permission-mode', 'full',
+    '--permission-mode', 'bypassPermissions',
+    '--bare',
   ];
 
   const child = spawn('claude', args, {

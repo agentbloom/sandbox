@@ -16,4 +16,8 @@ COPY src/ src/
 COPY docs/ docs/
 RUN pnpm run build
 
+RUN useradd -m sandbox
+RUN mkdir -p /workspace && chown sandbox:sandbox /workspace
+USER sandbox
+
 ENTRYPOINT ["node", "dist/index.js"]

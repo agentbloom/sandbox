@@ -20,6 +20,8 @@ ${spec}
 
 The production start command is \`node server/dist/server.js\`. If the application needs to run database migrations or other setup before starting, update the root \`start\` script in package.json to include those steps (e.g. \`"start": "cd server && drizzle-kit push --force && cd .. && node server/dist/server.js"\`).
 
+The template ships a placeholder home page at \`client/src/pages/Home.tsx\` and a placeholder item page at \`client/src/pages/Item.tsx\`. Overwrite them with the workflow's actual UI. The home page should be the main entry point for the workflow's functionality. Update \`client/src/App.tsx\` routes to match.
+
 Start by reading AGENTS.md and globbing the file layout, then implement all required changes.`;
 
   // The system prompt is the stack template's AGENTS.md, which lives in the

@@ -60,7 +60,7 @@ Start by reading AGENTS.md and globbing the file layout, then implement all requ
     ...allowedToolsFlags,
     '--output-format', 'stream-json',
     '--max-turns', '100',
-    '--model', 'sonnet',
+    '--model', 'opus',
     '--permission-mode', 'full',
   ];
 

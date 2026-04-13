@@ -53,7 +53,6 @@ Start by reading AGENTS.md and globbing the file layout, then implement all requ
     '--model', 'opus',
     '--dangerously-skip-permissions',
     '--verbose',
-    '--bare',
   ];
 
   const child = spawn('claude', args, {

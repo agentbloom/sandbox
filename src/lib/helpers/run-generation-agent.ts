@@ -8,6 +8,7 @@ async function runGenerationAgent(
   workflowId: string,
   workingDir: string,
   spec: string,
+  workflowConfig: string,
 ): Promise<void> {
 
   const prompt = `Generate the application according to the following specification.
@@ -16,9 +17,24 @@ async function runGenerationAgent(
 
 ${spec}
 
+## Workflow config
+
+The workflow has been configured with the following infrastructure flags:
+
+\`\`\`json
+${workflowConfig}
+\`\`\`
+
+Use these flags to decide which parts of the template to keep.
+
+- **db**: if \`true\`, keep \`server/drizzle.config.ts\`, \`server/src/db/\`, and the \`drizzle-orm\` / \`drizzle-kit\` dependencies in \`server/package.json\`, and define your schema in \`server/src/db/schema.ts\`. If \`false\`, DELETE \`server/drizzle.config.ts\` entirely, remove \`server/src/db/\`, remove \`drizzle-orm\` and \`drizzle-kit\` from \`server/package.json\`, and do not import any drizzle code. The production start script auto-detects the presence of \`server/drizzle.config.ts\` to decide whether to run migrations — so removing the file is what turns migrations off.
+- **email**: if \`true\`, use Resend for transactional email; if \`false\`, do not import \`resend\` or send email.
+- **cron**: if \`true\`, register scheduled jobs via \`@fastify/schedule\`; if \`false\`, do not register any schedules.
+- **agent**: if \`true\`, expose a Mastra agent; if \`false\`, no agent routes.
+
 ## Deployment
 
-The production start command is \`node server/dist/server.js\`. If the application needs to run database migrations or other setup before starting, update the root \`start\` script in package.json to include those steps (e.g. \`"start": "cd server && drizzle-kit push --force && cd .. && node server/dist/server.js"\`).
+The production start command is \`pnpm start\` (defined in the root \`package.json\`). It automatically runs \`drizzle-kit push --force\` if \`server/drizzle.config.ts\` is present, then starts the server. Do NOT modify the root \`start\` script.
 
 The template ships a placeholder home page at \`client/src/pages/Home.tsx\` and a placeholder item page at \`client/src/pages/Item.tsx\`. Overwrite them with the workflow's actual UI. The home page should be the main entry point for the workflow's functionality. Update \`client/src/App.tsx\` routes to match.
 

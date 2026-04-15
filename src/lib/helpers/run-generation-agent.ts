@@ -36,8 +36,8 @@ Start by reading AGENTS.md and globbing the file layout, then implement all requ
   // Claude Code uses the OAuth token for subscription-based auth (no API
   // key billing). Do NOT pass ANTHROPIC_API_KEY — if both are present,
   // Claude Code prefers the API key and bills through it instead of the
-  // subscription. ANTHROPIC_API_KEY stays in the sandbox env for the Qwen
-  // security reviews but must not leak into the Claude Code child process.
+  // subscription. ANTHROPIC_API_KEY is used by the security reviews but
+  // must not leak into the Claude Code child process.
   const childEnv: NodeJS.ProcessEnv = {
     ...process.env,
     CLAUDE_CODE_OAUTH_TOKEN: oauthToken,

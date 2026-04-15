@@ -1,18 +1,18 @@
 import { generateText } from 'ai';
-import { qwen } from '../model/qwen.js';
+import { anthropic } from '../model/anthropic.js';
 
-export interface QwenMessage {
+export interface AiMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
 }
 
-export interface QwenResponse {
+export interface AiResponse {
   content: Array<{ text: string }>;
 }
 
-async function makeAiCall(model: string, messages: QwenMessage[], maxTokens: number = 1024): Promise<QwenResponse> {
+async function makeAiCall(model: string, messages: AiMessage[], maxTokens: number = 1024): Promise<AiResponse> {
   const result = await generateText({
-    model: qwen(model),
+    model: anthropic(model),
     messages,
     maxOutputTokens: maxTokens,
   });

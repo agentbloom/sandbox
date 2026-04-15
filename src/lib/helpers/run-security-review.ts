@@ -9,7 +9,7 @@ const PROMPT_FILE = path.resolve(__dirname, '../../../docs/CODE_SECURITY_REVIEW_
 
 // Hard caps to keep the security review prompt within a reasonable token
 // budget. The full src/ tree of a generated app can run to hundreds of
-// thousands of tokens; we cap each file and the total to keep one Qwen
+// thousands of tokens; we cap each file and the total to keep one API
 // call cheap and bounded.
 const MAX_FILE_BYTES = 12_000;
 const MAX_TOTAL_BYTES = 150_000;
@@ -52,9 +52,9 @@ async function runSecurityReview(workflowId: string, workingDir: string): Promis
   let result;
 
   try {
-    result = await makeAiCall('qwen-plus', [{ role: 'user', content: prompt }]);
+    result = await makeAiCall('claude-haiku-4-5-20251001', [{ role: 'user', content: prompt }]);
   } catch (error) {
-    logger.error({ err: error }, '[security-review] Failed to call Qwen API');
+    logger.error({ err: error }, '[security-review] Failed to call Anthropic API');
     return;
   }
 

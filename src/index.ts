@@ -26,8 +26,7 @@ async function main(): Promise<void> {
   }
 
   const githubToken = process.env.GITHUB_TOKEN;
-  const qwenApiKey = process.env.QWEN_API_KEY;
-  const qwenBaseUrl = process.env.QWEN_BASE_URL;
+  const anthropicApiKey = process.env.PLATFORM_ANTHROPIC_API_KEY;
   const redisUrl = process.env.REDIS_URL;
   const githubRepoUrl = process.env.GITHUB_REPO_URL;
   const spec = process.env.WORKFLOW_SPEC;
@@ -37,13 +36,8 @@ async function main(): Promise<void> {
     return;
   }
 
-  if (!qwenApiKey) {
-    await createError(workflowId, 'Missing QWEN_API_KEY environment variable', new Error('QWEN_API_KEY is not set'));
-    return;
-  }
-
-  if (!qwenBaseUrl) {
-    await createError(workflowId, 'Missing QWEN_BASE_URL environment variable', new Error('QWEN_BASE_URL is not set'));
+  if (!anthropicApiKey) {
+    await createError(workflowId, 'Missing PLATFORM_ANTHROPIC_API_KEY environment variable', new Error('ANTHROPIC_API_KEY is not set'));
     return;
   }
 

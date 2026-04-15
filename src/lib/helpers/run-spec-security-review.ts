@@ -13,9 +13,9 @@ async function runSpecSecurityReview(workflowId: string, spec: string): Promise<
   let result;
 
   try {
-    result = await makeAiCall('qwen-plus', [{ role: 'user', content: prompt }]);
+    result = await makeAiCall('claude-haiku-4-5-20251001', [{ role: 'user', content: prompt }]);
   } catch (error) {
-    logger.error({ err: error }, '[spec-security-review] Failed to call Qwen API');
+    logger.error({ err: error }, '[spec-security-review] Failed to call Anthropic API');
     return;
   }
 

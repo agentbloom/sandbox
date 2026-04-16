@@ -32,6 +32,10 @@ Use these flags to decide which parts of the template to keep.
 - **cron**: if \`true\`, register scheduled jobs via \`@fastify/schedule\`; if \`false\`, do not register any schedules.
 - **agent**: if \`true\`, expose a Mastra agent; if \`false\`, no agent routes.
 
+## Secrets
+
+If you need a random secret (e.g. for session signing, JWT tokens, encryption), use one of these exact env var names: \`SESSION_SECRET\`, \`JWT_SECRET\`, \`ENCRYPTION_KEY\`, \`AUTH_SECRET\`. They are set to cryptographically stable values at deploy time and remain consistent across redeploys. Do NOT generate or hardcode secrets yourself, and do NOT invent new env var names for secrets.
+
 ## Deployment
 
 The production start command is \`pnpm start\` (defined in the root \`package.json\`). It automatically runs \`drizzle-kit push --force\` if \`server/drizzle.config.ts\` is present, then starts the server. Do NOT modify the root \`start\` script.

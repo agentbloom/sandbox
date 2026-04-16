@@ -20,7 +20,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await publishEvent(workflowId, 'generator:started', 'Starting generation...');
+    await publishEvent(workflowId, 'generator:started', 'Sandbox generator started');
   } catch {
     // non-fatal
   }
@@ -63,7 +63,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await publishEvent(workflowId, 'generator:progress', 'Running spec security review...');
+    await publishEvent(workflowId, 'generator:progress', 'Running spec security review');
   } catch {
     // non-fatal
   }
@@ -76,7 +76,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await publishEvent(workflowId, 'generator:progress', 'Cloning workflow repository...');
+    await publishEvent(workflowId, 'generator:progress', 'Cloning workflow repository');
   } catch {
     // non-fatal
   }
@@ -88,7 +88,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await publishEvent(workflowId, 'generator:progress', 'Installing dependencies...');
+    await publishEvent(workflowId, 'generator:progress', 'Installing workspace dependencies');
   } catch {
     // non-fatal
   }
@@ -100,7 +100,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await publishEvent(workflowId, 'generator:progress', 'Running generation agent...');
+    await publishEvent(workflowId, 'generator:progress', 'Running Claude Code generation agent');
   } catch {
     // non-fatal
   }
@@ -112,7 +112,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await publishEvent(workflowId, 'generator:progress', 'Running security review...');
+    await publishEvent(workflowId, 'generator:progress', 'Running post-generation security review');
   } catch {
     // non-fatal
   }
@@ -125,7 +125,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await publishEvent(workflowId, 'generator:progress', 'Pushing to GitHub...');
+    await publishEvent(workflowId, 'generator:progress', 'Pushing generated changes to GitHub');
   } catch {
     // non-fatal
   }
@@ -138,7 +138,7 @@ async function main(): Promise<void> {
   }
 
   try {
-    await publishEvent(workflowId, 'generator:complete', 'Generation complete', { githubRepoUrl });
+    await publishEvent(workflowId, 'generator:complete', 'Sandbox generator complete', { githubRepoUrl });
   } catch {
     // non-fatal
   }

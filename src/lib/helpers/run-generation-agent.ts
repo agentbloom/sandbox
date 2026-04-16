@@ -70,7 +70,7 @@ Start by reading AGENTS.md and globbing the file layout, then implement all requ
     '--append-system-prompt', systemPrompt,
     '--tools', 'Bash,Read,Write,Edit,Glob,Grep',
     '--output-format', 'stream-json',
-    '--model', 'opus',
+    '--model', 'claude-opus-4-7',
     '--dangerously-skip-permissions',
     '--verbose',
   ];
